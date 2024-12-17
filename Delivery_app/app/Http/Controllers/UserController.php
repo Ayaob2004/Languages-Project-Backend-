@@ -14,16 +14,14 @@ class UserController extends Controller
         $request->validate([
            'first_name'=>'required|String|max:50',
            'last_name'=>'required|String|max:50',
-           'phone'=>'required|max:10',
+           'phone'=>'required|max:10|unique:users,phone',
            'password'=>'required|String|min:8|confirmed', 
-           'email'=>'required|String|max:200|unique:users,email',
         ]);
         $user = User::create([
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
             'phone'=>$request->phone,
             'password'=>Hash::make($request->password),
-            'email'=>$request->email,
         ]);
         return response()->json([
             'message'=>'user registerd successfully',
