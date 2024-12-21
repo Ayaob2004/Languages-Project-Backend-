@@ -23,9 +23,11 @@ class UserController extends Controller
             'phone'=>$request->phone,
             'password'=>Hash::make($request->password),
         ]);
+        $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'message'=>'user registerd successfully',
-            'User'=>$user
+            'User'=>$user,
+            'token'=>$token
         ], 201);
     }
 
