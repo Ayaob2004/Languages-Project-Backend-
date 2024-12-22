@@ -19,7 +19,7 @@ class UserController extends Controller
            'first_name'=>'required|String|max:50',
            'last_name'=>'required|String|max:50',
            'phone'=>'required|max:10|unique:users,phone',
-           'password'=>'required|String|min:8|confirmed' 
+           'password'=>'required|String|min:8|confirmed'
         ]);
         $user = User::create([
             'first_name'=>$request->first_name,
@@ -40,7 +40,7 @@ class UserController extends Controller
     {
         $request->validate([
             'phone'=>'required|max:10',
-            'password'=>'required|String' 
+            'password'=>'required|String'
         ]);
         if(!Auth::attempt($request->only('phone','password'))){
             return response()->json([
@@ -112,7 +112,7 @@ class UserController extends Controller
 
 
     public function addUserAddress(Request $request){
-        
+
         $user = Auth::user();
         // Validate the address input
         $request->validate([
