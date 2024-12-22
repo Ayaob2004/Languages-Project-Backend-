@@ -60,4 +60,16 @@ class UserController extends Controller
             'message'=>'logout successful'
         ]);
     }
+
+
+
+    public function addProfileImage(Request $request){
+        
+    }
+
+
+
+    public function addUserAddress(Request $request){
+        
+    }
 }
