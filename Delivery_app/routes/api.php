@@ -21,8 +21,8 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('addProfileImage',[UserController::class ,'addProfileImage']);
     Route::post('address',[UserController::class ,'addOrUpdateAddress']);
 
-    Route::get('getStores',[StoreController::class ,'getStore']);
-    Route::get('getBooksByStore/{store_id}',[StoreController::class ,'getStore']);
+    Route::get('getStores',[StoreController::class ,'getStores']);
+    Route::get('getBooksByStore/{store_id}',[StoreController::class ,'getBooksByStore']);
     Route::get('getBookDetail/{book_id}',[StoreController::class ,'getBookDetail']);
 
     Route::post('createCart',[BookController::class, 'createCart']);
