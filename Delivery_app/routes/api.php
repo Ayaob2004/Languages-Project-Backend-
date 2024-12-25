@@ -29,11 +29,12 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('getCart',[BookController::class, 'getCart']);
     Route::get('addBookToCart',[BookController::class, 'addBookToCart']);
     Route::delete('deleteCart',[BookController::class, 'deleteCart']);
+    Route::get('search/{search}',[StoreController::class ,'search']);
+    Route::get('confirmtCart/{cart_id}',[StoreController::class ,'confirmtCart']);
+
 
 
 });
 
-Route::get('search/{search}',[StoreController::class ,'search']);
-Route::get('confirmtCart/{cart_id}',[StoreController::class ,'confirmtCart']);
 
 
