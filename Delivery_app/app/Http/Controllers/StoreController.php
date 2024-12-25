@@ -23,7 +23,6 @@ class StoreController extends Controller
 
     public function getBooksByStore($store_id){
         $books = Book::where('store_id',$store_id)->get(['id',"name","image"]);
-
         return response()->json([
             "message"=>"the all books of one store",
             "data" => $books,
@@ -33,7 +32,6 @@ class StoreController extends Controller
     public function getBookDetail($book_id){
 
         $book = Book::where('id',$book_id)->get();
-
         return response()->json([
             "message" => " the book details",
             "data" => $book

@@ -16,10 +16,10 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-           'first_name'=>'required|String|max:50',
-           'last_name'=>'required|String|max:50',
-           'phone'=>'required|max:10|unique:users,phone',
-           'password'=>'required|String|min:8|confirmed'
+            'first_name'=>'required|String|max:50',
+            'last_name'=>'required|String|max:50',
+            'phone'=>'required|max:10|unique:users,phone',
+            'password'=>'required|String|min:8|confirmed'
         ]);
         $user = User::create([
             'first_name'=>$request->first_name,
@@ -67,67 +67,46 @@ class UserController extends Controller
 
 
 
-    public function addProfileImage(Request $request){
-
-        $user = Auth::user();
-        $user_img = Auth::user()->image;
-
-        // Validate the request
-        $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-        ]);
-
-        // Check if an image file is uploaded
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-
-            // Generate a unique file name
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            // Save the image in the public folder
-            $file->move(public_path('profile_images'), $filename);
-
-            // Delete old image if it exists
-            if ($user_img) {
-                $oldImagePath = public_path('profile_images/' . $user_img);
-                if (File::exists($oldImagePath)) {
-                    File::delete($oldImagePath);
-                }
+    public function addProfileImage(Request $request)
+{
+    $user = Auth::user();
+    $user_img = $user->image; // Get the current image path from the user
+    $request->validate([
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+    ]);
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('profile_images'), $filename);
+        if ($user_img) {
+            $oldImagePath = public_path('profile_images/' . $user_img);
+            if (File::exists($oldImagePath)) {
+                File::delete($oldImagePath);
             }
-
-            // Save the new image filename in the database
-            $user_img = $filename;
         }
-
-        // Save the user details
-        $user->save();
-
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'user' => $user,
-        ]);
-
+        $user->image = $filename;
     }
+    $user->save(); // This should work now
+    return response()->json([
+        'message' => 'Profile updated successfully',
+        'user' => $user,
+    ]);
+}
 
 
 
-    public function addUserAddress(Request $request){
+    public function addOrUpdateAddress(Request $request)
+{
+    $user = Auth::user();
+    $request->validate([
+        'address' => 'required|string|max:255',
+    ]);
+    $user->address = $request->input('address');
+    $user->save();
+    return response()->json([
+        'message' => 'Address updated successfully',
+        'user_address' => $user->address,
+    ], 200);
+}
 
-        $user = Auth::user();
-        // Validate the address input
-        $request->validate([
-            'address' => 'required|string|max:255',
-        ]);
-
-        // Update the address
-        $user->address = $request->address;
-
-        $user->save();
-
-        return response()->json([
-            'message' => 'Address updated successfully',
-            'user' => $user,
-        ]);
-
-    }
 }
