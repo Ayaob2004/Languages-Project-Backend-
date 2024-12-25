@@ -68,7 +68,7 @@ class UserController extends Controller
 
 
     public function addProfileImage(Request $request)
-{
+    {
     $user = Auth::user();
     $user_img = $user->image; // Get the current image path from the user
     $request->validate([
@@ -91,12 +91,12 @@ class UserController extends Controller
         'message' => 'Profile updated successfully',
         'user' => $user,
     ]);
-}
+    }
 
 
 
     public function addOrUpdateAddress(Request $request)
-{
+    {
     $user = Auth::user();
     $request->validate([
         'address' => 'required|string|max:255',
@@ -107,6 +107,6 @@ class UserController extends Controller
         'message' => 'Address updated successfully',
         'user_address' => $user->address,
     ], 200);
-}
+    }
 
 }

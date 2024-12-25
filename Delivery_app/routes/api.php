@@ -33,5 +33,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
 });
 
+Route::get('search/{search}',[StoreController::class ,'search']);
+Route::get('confirmtCart/{cart_id}',[StoreController::class ,'confirmtCart']);
 
 

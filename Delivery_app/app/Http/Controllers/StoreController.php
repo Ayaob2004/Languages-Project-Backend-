@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\Book;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -37,4 +38,39 @@ class StoreController extends Controller
             "data" => $book
         ]);
     }
+
+    public function search($search){
+        $results = Store::where('name', 'like', "%$search%")->get();
+        $results2 = Book::where('name', 'like', "%$search%")->get();
+
+        return response()->json([
+            'messege' => 'the search results',
+            'Stores' => $results,
+            'Books' => $results2
+        ]);
+    }
+
+    public function confirmtCart($cart_id){
+
+        $cart = Cart::find($cart_id);
+        if(!$cart){
+            return response()->json([
+                'messege' => 'Cart not found'
+            ], 404);
+        }
+        $cart->status = 'done';
+        $cart->save();
+
+        $books = $cart->books()->get();
+        foreach($books as $book){
+            $book->amount =$book->amount -1;
+            $book->save();
+        }
+        return response()->json([
+            'messege' => 'the status of cart changed to done',
+            'messege2' => 'the book amounts decrease 1'
+        ]);
+
+    }
+
 }
