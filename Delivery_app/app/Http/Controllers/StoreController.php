@@ -22,10 +22,18 @@ class StoreController extends Controller
         ]);
     }
 
-    public function getBooksByStore($store_id){
-        $books = Book::where('store_id',$store_id)->get(['id',"name","image"]);
+    public function getTypesByStore($store_id){
+        $types = Book::where('store_id',$store_id)->get(['type']);
         return response()->json([
-            "message"=>"the all books of one store",
+            "message"=>"the all types of one store",
+            "data" => $types,
+        ]);
+    }
+
+    public function getBooksByType($type){
+        $books = Book::where('type',$type)->get();
+        return response()->json([
+            "message"=>"the all books of one type in a one store",
             "data" => $books,
         ]);
     }
