@@ -39,7 +39,6 @@ class StoreController extends Controller
     }
 
     public function getBookDetail($book_id){
-
         $book = Book::where('id',$book_id)->get();
         return response()->json([
             "message" => " the book details",
@@ -47,10 +46,10 @@ class StoreController extends Controller
         ]);
     }
 
+
     public function search($search){
         $results = Store::where('name', 'like', "%$search%")->get();
         $results2 = Book::where('name', 'like', "%$search%")->get();
-
         return response()->json([
             'messege' => 'the search results',
             'Stores' => $results,
@@ -58,8 +57,8 @@ class StoreController extends Controller
         ]);
     }
 
-    public function confirmtCart($cart_id){
 
+    public function confirmtCart($cart_id){
         $cart = Cart::find($cart_id);
         if(!$cart){
             return response()->json([
@@ -68,7 +67,6 @@ class StoreController extends Controller
         }
         $cart->status = 'done';
         $cart->save();
-
         $books = $cart->books()->get();
         foreach($books as $book){
             $book->amount =$book->amount -1;
@@ -78,7 +76,6 @@ class StoreController extends Controller
             'messege' => 'the status of cart changed to done',
             'messege2' => 'the book amounts decrease 1'
         ]);
-
     }
 
 }

@@ -8,6 +8,10 @@ class Cart extends Model
 {
     protected $guarded = ['id'];
 
+    protected $attributes = [
+        'status' => 'pending', // Default value
+    ];
+
     public function users(){
         return $this->belongsTo(User::class);
 
