@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('author');
             $table->string('price');
             $table->string('image');
-            $table->string('amount');
-            $table->string('ratings');
-            $table->string('details');
+            $table->integer('amount');
+            $table->float('ratings');
+            $table->longText('details');
+            $table->string('type');
             $table->timestamps();
         });
     }

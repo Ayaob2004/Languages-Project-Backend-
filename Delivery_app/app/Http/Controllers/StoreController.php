@@ -36,13 +36,27 @@ class StoreController extends Controller
             "message"=>"the all books of one type in a one store",
             "data" => $books,
         ]);
+        return response()->json([
+            "message" => "the all books of one type in a one store",
+            "data" => [
+                "name" => $book->name,
+                "image" => $book->image,
+            ]
+        ]);
     }
 
     public function getBookDetail($book_id){
-        $book = Book::where('id',$book_id)->get();
+        $book = Book::where('id',$book_id)->first();
         return response()->json([
-            "message" => " the book details",
-            "data" => $book
+            "message" => "The book details",
+            "data" => [
+                "name" => $book->name,
+                "author" => $book->author,
+                "price" => $book->price,
+                "ratings" => $book->ratings,
+                "image" => $book->image,
+                "details" => $book->details,
+            ]
         ]);
     }
 
