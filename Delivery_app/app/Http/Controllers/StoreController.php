@@ -36,13 +36,6 @@ class StoreController extends Controller
             "message"=>"the all books of one type in a one store",
             "data" => $books,
         ]);
-        return response()->json([
-            "message" => "the all books of one type in a one store",
-            "data" => [
-                "name" => $book->name,
-                "image" => $book->image,
-            ]
-        ]);
     }
 
     public function getBookDetail($book_id){
