@@ -16,7 +16,9 @@ Route::middleware('auth:sanctum')->group(function(){
 
     Route::post('logout',[UserController::class, 'logout']);
     Route::post('addProfileImage',[UserController::class ,'addProfileImage']);
+    Route::delete('deleteProfileImage',[UserController::class, 'deleteProfileImage']);
     Route::post('address',[UserController::class ,'addOrUpdateAddress']);
+    Route::get('getUserInfo',[UserController::class ,'getUserInfo']);
 
 
     Route::get('getStores',[StoreController::class ,'getStores']);

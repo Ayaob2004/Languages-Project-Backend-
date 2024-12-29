@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
-
+use Storage;
 
 class UserController extends Controller
 {
@@ -54,7 +54,6 @@ class UserController extends Controller
             'User'=>$user,
             'Token'=> $token
         ], 201);
-
     }
 
     public function logout(Request $request)
@@ -76,7 +75,7 @@ class UserController extends Controller
     ]);
     if ($request->hasFile('image')) {
         $file = $request->file('image');
-        $filename = time() . '_' . $file->getClientOriginalName();
+        $filename =  $file->getClientOriginalName();
         $file->move(public_path('profile_images'), $filename);
         if ($user_img) {
             $oldImagePath = public_path('profile_images/' . $user_img);
@@ -84,15 +83,37 @@ class UserController extends Controller
                 File::delete($oldImagePath);
             }
         }
-        $user->image = $filename;
+        $user->image = '/profile_images/'.$filename;
     }
     $user->save(); // This should work now
     return response()->json([
         'message' => 'Profile updated successfully',
-        'user' => $user,
+        'user_image' => $user->image,
     ]);
     }
 
+
+
+    public function deleteProfileImage()
+    {
+        $user = Auth::user();
+        $userImg = $user->image; // Get the current image path from the user
+        if ($userImg) {
+            $imagePath = public_path($userImg); // Construct the full path to the image
+            if (File::exists($imagePath)) {
+                File::delete($imagePath); // Delete the file if it exists
+            }
+            // Update the user's image field to null
+            $user->image = null;
+            $user->save();
+            return response()->json([
+                'message' => 'Profile image deleted successfully',
+            ]);
+        }
+        return response()->json([
+            'message' => 'No profile image to delete',
+        ], 404);
+    }
 
 
     public function addOrUpdateAddress(Request $request)
@@ -109,4 +130,17 @@ class UserController extends Controller
     ], 200);
     }
 
+
+    public function getUserInfo()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated.'], 401);
+        }
+        return response()->json([
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'phone' => $user->phone,
+        ]);
+    }
 }
