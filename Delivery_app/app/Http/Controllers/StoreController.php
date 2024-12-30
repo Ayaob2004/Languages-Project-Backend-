@@ -22,36 +22,44 @@ class StoreController extends Controller
         ]);
     }
 
-    public function getTypesByStore($store_id){
-        $types = Book::where('store_id',$store_id)->get(['type']);
-        return response()->json([
-            "message"=>"the all types of one store",
-            "data" => $types,
-        ]);
+    public function getAllTypes()
+    {
+        $types = Book::select('type')->distinct()->pluck('type');
+        return response()->json($types);
     }
 
-    public function getBooksByType($type){
-        $books = Book::where('type',$type)->get();
-        return response()->json([
-            "message"=>"the all books of one type in a one store",
-            "data" => $books,
-        ]);
+
+    public function getBooksByStoreAndType($store_id, $type)
+    {
+        $books = Book::whereHas('stores', function ($query) use ($store_id) {
+                $query->where('stores.id', $store_id);
+            })
+            ->where('type', $type)
+            ->select('name', 'image', 'author', 'price')
+            ->get();
+        return response()->json($books);
     }
 
-    public function getBookDetail($book_id){
-        $book = Book::where('id',$book_id)->first();
-        return response()->json([
-            "message" => "The book details",
-            "data" => [
-                "name" => $book->name,
-                "author" => $book->author,
-                "price" => $book->price,
-                "ratings" => $book->ratings,
-                "image" => $book->image,
-                "details" => $book->details,
-            ]
-        ]);
+    public function getBookDetail($book_id)
+    {
+        $book = Book::where('id', $book_id)
+        ->select('name', 'author', 'image', 'price', 'ratings', 'details')
+        ->first();
+        if ($book) {
+            return response()->json([
+                "message" => "The book details",
+                "data" => $book
+            ]);
+        } else {
+            return response()->json([
+                "message" => "Book not found",
+                "data" => null
+            ], 404);
+        }
     }
+
+
+
 
 
     public function search($search){

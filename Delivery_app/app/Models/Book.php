@@ -8,15 +8,18 @@ class Book extends Model
 {
     protected $guarded = ['id'];
 
-    public function stores (){
-    return $this->belongsTo(Store::class);
-}
+    public function stores()
+    {
+        return $this->belongsToMany(Store::class, 'book_store');
+    }
 
-public function carts(){
-    return $this ->belongsToMany(Cart::class);
-}
+    public function carts()
+    {
+        return $this ->belongsToMany(Cart::class);
+    }
 
-public function favorites(){
-    return $this ->belongsToMany(Favorite::class);
-}
+    public function favorites()
+    {
+        return $this ->belongsToMany(Favorite::class, 'favorite__book')->withTimestamps();
+    }
 }

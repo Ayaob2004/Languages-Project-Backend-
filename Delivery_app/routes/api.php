@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -20,14 +21,14 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('address',[UserController::class ,'addOrUpdateAddress']);
     Route::get('getUserInfo',[UserController::class ,'getUserInfo']);
 
+    Route::get('stores',[StoreController::class ,'getStores']);
+    Route::get('types',[StoreController::class ,'getAllTypes']);
+    Route::get('books/{store_id}/{type}',[StoreController::class ,'getBooksByStoreAndType']);
+    Route::get('bookDetail/{book_id}',[StoreController::class ,'getBookDetail']);
 
-    Route::get('getStores',[StoreController::class ,'getStores']);
-    Route::get('getTypesByStore/{store_id}',[StoreController::class ,'getTypesByStore']);
-    Route::get('getBooksByType/{type}',[StoreController::class ,'getBooksByType']);
-    Route::get('getBookDetail/{book_id}',[StoreController::class ,'getBookDetail']);
+
     Route::get('search/{search}',[StoreController::class ,'search']);
     Route::get('confirmtCart/{cart_id}',[StoreController::class ,'confirmtCart']);
-
 
     Route::post('createCart',[CartController::class, 'createCart']);
     Route::post('updateCart/{cart_id}',[CartController::class, 'updateCart']);
@@ -36,5 +37,8 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('getCart/{cart_id}',[CartController::class, 'getCart']);
     Route::get('getAllCarts',[CartController::class, 'getAllCarts']);
 
+    Route::post('/favorites/add/{bookId}', [FavoriteController::class, 'addBookToFavorite']);
+    Route::post('/favorites/remove/{bookId}', [FavoriteController::class, 'removeBookFromFavorite']);
+    Route::get('/favorites', [FavoriteController::class, 'getAllFavorite']);
 
 });

@@ -11,7 +11,6 @@ return new class extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
             $table->string('name');
             $table->string('author');
             $table->string('price');
@@ -19,7 +18,7 @@ return new class extends Migration
             $table->integer('amount');
             $table->float('ratings');
             $table->longText('details');
-            $table->string('type');
+            $table->enum('type', ['novels' ,'children', 'culture', 'literary', 'scientific']);
             $table->timestamps();
         });
     }

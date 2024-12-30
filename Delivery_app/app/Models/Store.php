@@ -13,8 +13,9 @@ class Store extends Model
     protected $guarded = ['id'];
 
 
-    public function books (){
-        return $this->hasMany(Book::class);
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'book_store');
     }
 
 

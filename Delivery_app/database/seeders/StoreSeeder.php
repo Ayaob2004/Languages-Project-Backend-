@@ -29,25 +29,15 @@ class StoreSeeder extends Seeder
         ]);
         //4
         DB::table("stores")->insert([
-            "name"=>"City Lights Bookstore",
-            "image"=>"/stores_images/City_Lights_Bookstore.jpg"
-        ]);
-        //5
-        DB::table("stores")->insert([
             "name"=>"The Corner Bookstore",
             "image"=>"/stores_images/The_Corner_Bookstore.jpg"
         ]);
-        //6
+        //5
         DB::table("stores")->insert([
             "name"=>"The Island Bookshop",
             "image"=>"/stores_images/The_Island_Bookshop.jpg"
         ]);
-        //7
-        DB::table("stores")->insert([
-            "name"=>"Old Town Books",
-            "image"=>"/stores_images/Old_Town_Books.jpg"
-        ]);
-        //8
+        //6
         DB::table("stores")->insert([
             "name"=>"Lost City Books",
             "image"=>"/stores_images/Lost_City_Books.jpg"
