@@ -12,9 +12,7 @@ class FavoriteController extends Controller
     {
         $user = Auth::user();
         $book = Book::findOrFail($bookId);
-        // Get or create the favorite list for the user
         $favorite = $user->favorite()->firstOrCreate([]);
-        // Check if the book is already in favorites
         if (!$favorite->books()->where('book_id', $bookId)->exists()) {
             $favorite->books()->attach($bookId);
             return response()->json(['message' => 'Book added to favorites successfully.']);
@@ -33,12 +31,23 @@ class FavoriteController extends Controller
         return response()->json(['message' => 'Book is not in favorites.'], 400);
     }
 
+
     public function getAllFavorite()
     {
         $user = Auth::user();
         $favorite = $user->favorite;
         if ($favorite) {
-            $books = $favorite->books; // Get all books in the favorite list
+            $books = $favorite->books->map(function ($book) {
+                return [
+                    'name' => $book->name,
+                    'author' => $book->author,
+                    'price' => $book->price,
+                    'image' => $book->image,
+                    'ratings' => $book->ratings,
+                    'details' => $book->details,
+                    'type' => $book->type
+                ];
+            });
             return response()->json($books);
         }
         return response()->json(['message' => 'No favorite list found.'], 404);

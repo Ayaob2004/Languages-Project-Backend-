@@ -9,84 +9,112 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    public function addBookToCart2($bookId)
+
+    public function addBookToCart($bookId)
     {
         $user = Auth::user();
         if (!$user) {
-            return response()->json(['error' => 'User not authenticated'], 401);
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+        $cart = $user->carts()->where('status', 'pending')->first();
+        if (!$cart) {
+            $cart = Cart::create([
+                'user_id' => $user->id,
+                'status' => 'pending',
+                'cost' => 0, // Initially set the cost to 0
+            ]);
         }
         $book = Book::find($bookId);
         if (!$book) {
-            return response()->json(['error' => 'Book not found'], 404);
+            return response()->json(['message' => 'Book not found'], 404);
         }
-        $cart = Cart::firstOrCreate(
-            ['user_id' => $user->id, 'status' => 'pending'],
-            ['cost' => 0]
-        );
-        if (!$cart->books->contains($bookId)) {
-            $cart->books()->attach($bookId);
-        }
-        $totalCost = $cart->books->sum(function ($book) {
-            return $book->price;
-        });
-        $cart->cost = $totalCost;
-        $cart->save();
-        return response()->json(['message' => 'Book added to cart successfully', 'cart' => $cart], 200);
-    }
-
-
-    // public function addBookToCart($bookId)
-    // {
-    //     $user = Auth::user();
-    //     if (!$user) {
-    //         return response()->json(['error' => 'User not authenticated'], 401);
-    //     }
-    //     $book = Book::find($bookId);
-    //     if (!$book) {
-    //         return response()->json(['error' => 'Book not found'], 404);
-    //     }
-    //     $cart = Cart::with('books')->firstOrCreate(
-    //         ['user_id' => $user->id, 'status' => 'pending'],
-    //         ['cost' => 0]
-    //     );
-    //     $existingBook = $cart->books->firstWhere('id', $bookId);
-    //     if ($existingBook) {
-    //         $cart->books()->updateExistingPivot($bookId, [
-    //             'quantity' => $existingBook->pivot->quantity + 1,
-    //         ]);
-    //     } else {
-    //         $cart->books()->attach($bookId, ['quantity' => 1]);
-    //     }
-    //     $totalCost = $cart->books->sum(function ($book) {
-    //         return $book->price * $book->pivot->quantity;
-    //     });
-    //     $cart->cost = $totalCost;
-    //     $cart->save();
-    //     $cart->load('books');
-    //     return response()->json(['message' => 'Book added to cart successfully', 'cart' => $cart], 200);
-    // }
-
-    public function getCart($id)
-    {
-        $cart = Cart::where('id', $id)->where('user_id', Auth::id())->first();
-        if (!$cart) {
-            return response()->json(['message' => 'Cart not found or unauthorized'], 404);
-        }
+        $cart->books()->attach($bookId);
+        $totalCost = $cart->books->sum('price');
+        $cart->update(['cost' => $totalCost]);
         return response()->json([
-            'message' => 'Cart retrieved successfully',
-            'cart' => $cart
+            'message' => 'Book added to cart successfully',
+            'total_cost' => $totalCost
         ], 200);
     }
 
-    public function getAllCarts()
+    public function deleteBookFromCart($bookId)
     {
-        $carts = Cart::where('user_id', Auth::id())->get();
-        if ($carts->isEmpty()) {
-            return response()->json(['message' => 'No carts found for this user'], 404);
+        $user = Auth::user();
+        $cart = $user->carts()->where('status', 'pending')->first();
+        if (!$cart) {
+            return response()->json(['message' => 'No pending cart found'], 404);
+        }
+        if (!$cart->books->contains($bookId)) {
+            return response()->json(['message' => 'Book not found in cart'], 404);
+        }
+        $cart->books()->detach($bookId);
+        $cart->load('books');
+        $totalCost = $cart->books->sum('price');
+        $cart->update(['cost' => $totalCost]);
+        return response()->json([
+            'message' => 'Book removed from cart successfully',
+            'total_cost' => $totalCost
+        ], 200);
+    }
+
+    public function getBooksInPendingCart()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+        $cart = $user->carts()->where('status', 'pending')->first();
+        if (!$cart) {
+            return response()->json(['message' => 'No pending cart found'], 404);
+        }
+        $books = $cart->books;
+        return response()->json([
+            'message' => 'Books retrieved successfully',
+            'books' => $books,
+            'total_cost' => $cart->cost
+        ], 200);
+    }
+
+    public function getPendingCart()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+        $cart = $user->carts()->where('status', 'pending')->first();
+        if (!$cart) {
+            return response()->json(['message' => 'No pending cart found'], 404);
         }
         return response()->json([
-            'message' => 'Carts retrieved successfully',
-            'carts' => $carts
+            'message' => 'Pending cart retrieved successfully',
+            'cart' => [
+                'id' => $cart->id,
+                'total_cost' => $cart->cost,
+                'books' => $cart->books,
+            ]
+        ], 200);
+    }
+
+    public function getDoneCarts()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
+        }
+        $doneCarts = $user->carts()->where('status', 'done')->get();
+        if ($doneCarts->isEmpty()) {
+            return response()->json(['message' => 'No done carts found'], 404);
+        }
+        $cartsData = $doneCarts->map(function ($cart) {
+            return [
+                'cart_id' => $cart->id,
+                'total_cost' => $cart->cost,
+                'books' => $cart->books,
+            ];
+        });
+        return response()->json([
+            'message' => 'Done carts retrieved successfully',
+            'done_carts' => $cartsData
         ], 200);
     }
 
@@ -101,30 +129,22 @@ class CartController extends Controller
         return response()->json(['message' => 'Cart deleted successfully'], 200);
     }
 
-    public function updateCart(Request $request, $id)
-    {
-        $cart = Cart::where('id', $id)->where('user_id', Auth::id())->first();
-        if (!$cart) {
-            return response()->json(['message' => 'Cart not found or unauthorized'], 404);
-        }
-        $request->validate([
-            'cost' => 'nullable|numeric|min:0',
-            'status' => 'nullable|in:pending,done',
-        ]);
-        $cart->update($request->only(['cost', 'status']));
-        return response()->json([
-            'message' => 'Cart updated successfully',
-            'cart' => $cart
-        ], 200);
-    }
 
-    public function confirmtCart($cart_id){
-        $cart = Cart::find($cart_id);
-        if(!$cart){
-            return response()->json([
-                'messege' => 'Cart not found'
-            ], 404);
+    public function confirmtCart(){
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'User not authenticated'], 401);
         }
+        $cart = $user->carts()->where('status', 'pending')->first();
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found'], 404);
+        }
+        // $cart = Cart::find($cart_id);
+        // if(!$cart){
+        //     return response()->json([
+        //         'messege' => 'Cart not found'
+        //     ], 404);
+        // }
         $cart->status = 'done';
         $cart->save();
         $books = $cart->books()->get();

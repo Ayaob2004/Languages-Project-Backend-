@@ -6,12 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
-        Schema::create('favorite__book', function (Blueprint $table) {
+        Schema::create('book_favorite', function (Blueprint $table) {
             $table->id();
             $table->foreignId('favorite_id')->constrained('favorites')->cascadeOnDelete();
             $table->foreignId('book_id')->constrained('books')->cascadeOnDelete();
@@ -19,11 +17,8 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('favorite__book');
+        Schema::dropIfExists('book_favorite');
     }
 };

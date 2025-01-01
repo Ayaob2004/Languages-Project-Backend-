@@ -20,6 +20,6 @@ class Book extends Model
 
     public function favorites()
     {
-        return $this ->belongsToMany(Favorite::class, 'favorite__book')->withTimestamps();
+        return $this ->belongsToMany(Favorite::class);
     }
 }

@@ -13,7 +13,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('book_id')->constrained('books')->cascadeOnDelete();
             $table->foreignId('cart_id')->constrained('carts')->cascadeOnDelete();
-            $table->integer('quantity')->default(1);
             $table->timestamps();
         });
     }

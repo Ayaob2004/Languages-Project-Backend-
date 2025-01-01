@@ -27,15 +27,20 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('bookDetail/{book_id}',[StoreController::class ,'getBookDetail']);
     Route::get('search/{search}',[StoreController::class ,'search']);
 
-    Route::post('addBookToCart/{book_id}',[CartController::class, 'addBookToCart']);
-    Route::get('getCart/{cart_id}',[CartController::class, 'getCart']);
-    Route::get('getAllCarts',[CartController::class, 'getAllCarts']);
-    Route::delete('deleteCart/{cart_id}',[CartController::class, 'deleteCart']);
-    Route::post('updateCart/{cart_id}',[CartController::class, 'updateCart']);
-    Route::get('confirmtCart/{cart_id}',[CartController::class ,'confirmtCart']);
+    Route::prefix('cart')->group(function () {
+        Route::post('addBook/{bookId}', [CartController::class, 'addBookToCart']);  
+        Route::delete('removeBook/{bookId}', [CartController::class, 'deleteBookFromCart']); 
+        Route::get('pending', [CartController::class, 'getPendingCart']);  
+        Route::get('done', [CartController::class, 'getDoneCarts']);
+        Route::get('confirm',[CartController::class ,'confirmtCart']);
+        Route::delete('delete/{cart_id}',[CartController::class, 'deleteCart']);
+    });
 
-    Route::post('/favorites/add/{bookId}', [FavoriteController::class, 'addBookToFavorite']);
-    Route::post('/favorites/remove/{bookId}', [FavoriteController::class, 'removeBookFromFavorite']);
-    Route::get('/favorites', [FavoriteController::class, 'getAllFavorite']);
+    Route::prefix('favorites')->group(function(){
+        Route::post('/add/{bookId}', [FavoriteController::class, 'addBookToFavorite']);
+        Route::post('/remove/{bookId}', [FavoriteController::class, 'removeBookFromFavorite']);
+        Route::get('/', [FavoriteController::class, 'getAllFavorite']);
+    });
+
 
 });

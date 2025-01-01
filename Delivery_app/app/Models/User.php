@@ -38,7 +38,7 @@ class User extends Authenticatable
         return $this ->hasMany(Cart::class);
     }
 
-    public function favorites(){
+    public function favorite(){
         return $this ->hasOne(Favorite::class);
     }
 }
