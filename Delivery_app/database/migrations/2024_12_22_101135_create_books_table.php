@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('author');
-            $table->string('price');
+            $table->float('price');
             $table->string('image');
             $table->integer('amount');
             $table->string('ratings');

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    public function addBookToCart($bookId)
+    public function addBookToCart2($bookId)
     {
         $user = Auth::user();
         if (!$user) {
@@ -33,6 +33,38 @@ class CartController extends Controller
         $cart->save();
         return response()->json(['message' => 'Book added to cart successfully', 'cart' => $cart], 200);
     }
+
+
+    // public function addBookToCart($bookId)
+    // {
+    //     $user = Auth::user();
+    //     if (!$user) {
+    //         return response()->json(['error' => 'User not authenticated'], 401);
+    //     }
+    //     $book = Book::find($bookId);
+    //     if (!$book) {
+    //         return response()->json(['error' => 'Book not found'], 404);
+    //     }
+    //     $cart = Cart::with('books')->firstOrCreate(
+    //         ['user_id' => $user->id, 'status' => 'pending'],
+    //         ['cost' => 0]
+    //     );
+    //     $existingBook = $cart->books->firstWhere('id', $bookId);
+    //     if ($existingBook) {
+    //         $cart->books()->updateExistingPivot($bookId, [
+    //             'quantity' => $existingBook->pivot->quantity + 1,
+    //         ]);
+    //     } else {
+    //         $cart->books()->attach($bookId, ['quantity' => 1]);
+    //     }
+    //     $totalCost = $cart->books->sum(function ($book) {
+    //         return $book->price * $book->pivot->quantity;
+    //     });
+    //     $cart->cost = $totalCost;
+    //     $cart->save();
+    //     $cart->load('books');
+    //     return response()->json(['message' => 'Book added to cart successfully', 'cart' => $cart], 200);
+    // }
 
     public function getCart($id)
     {
