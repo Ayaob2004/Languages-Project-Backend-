@@ -59,9 +59,6 @@ class StoreController extends Controller
     }
 
 
-
-
-
     public function search($search){
         $results = Store::where('name', 'like', "%$search%")->get();
         $results2 = Book::where('name', 'like', "%$search%")->get();
@@ -72,25 +69,5 @@ class StoreController extends Controller
         ]);
     }
 
-
-    public function confirmtCart($cart_id){
-        $cart = Cart::find($cart_id);
-        if(!$cart){
-            return response()->json([
-                'messege' => 'Cart not found'
-            ], 404);
-        }
-        $cart->status = 'done';
-        $cart->save();
-        $books = $cart->books()->get();
-        foreach($books as $book){
-            $book->amount =$book->amount -1;
-            $book->save();
-        }
-        return response()->json([
-            'messege' => 'the status of cart changed to done',
-            'messege2' => 'the book amounts decrease 1'
-        ]);
-    }
 
 }

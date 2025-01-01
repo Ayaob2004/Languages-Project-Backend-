@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('price');
             $table->string('image');
             $table->integer('amount');
-            $table->float('ratings');
+            $table->string('ratings');
             $table->longText('details');
             $table->enum('type', ['novels' ,'children', 'culture', 'literary', 'scientific']);
             $table->timestamps();

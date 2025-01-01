@@ -25,17 +25,14 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('types',[StoreController::class ,'getAllTypes']);
     Route::get('books/{store_id}/{type}',[StoreController::class ,'getBooksByStoreAndType']);
     Route::get('bookDetail/{book_id}',[StoreController::class ,'getBookDetail']);
-
-
     Route::get('search/{search}',[StoreController::class ,'search']);
-    Route::get('confirmtCart/{cart_id}',[StoreController::class ,'confirmtCart']);
 
-    Route::post('createCart',[CartController::class, 'createCart']);
-    Route::post('updateCart/{cart_id}',[CartController::class, 'updateCart']);
-    Route::post('addBookToCart/{cart_id}/{book_id}',[CartController::class, 'addBookToCart']);
-    Route::delete('deleteCart/{cart_id}',[CartController::class, 'deleteCart']);
+    Route::post('addBookToCart/{book_id}',[CartController::class, 'addBookToCart']);
     Route::get('getCart/{cart_id}',[CartController::class, 'getCart']);
     Route::get('getAllCarts',[CartController::class, 'getAllCarts']);
+    Route::delete('deleteCart/{cart_id}',[CartController::class, 'deleteCart']);
+    Route::post('updateCart/{cart_id}',[CartController::class, 'updateCart']);
+    Route::get('confirmtCart/{cart_id}',[CartController::class ,'confirmtCart']);
 
     Route::post('/favorites/add/{bookId}', [FavoriteController::class, 'addBookToFavorite']);
     Route::post('/favorites/remove/{bookId}', [FavoriteController::class, 'removeBookFromFavorite']);

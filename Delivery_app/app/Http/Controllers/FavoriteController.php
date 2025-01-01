@@ -44,5 +44,4 @@ class FavoriteController extends Controller
         return response()->json(['message' => 'No favorite list found.'], 404);
     }
 
-    
 }
