@@ -3,6 +3,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\SetLocale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +14,7 @@ Route::get('/user', function (Request $request) {
 Route::post('register',[UserController::class, 'register']);
 Route::post('login',[UserController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function(){
+Route::middleware(['auth:sanctum', SetLocale::class])->group(function() {
 
     Route::post('logout',[UserController::class, 'logout']);
     Route::post('addProfileImage',[UserController::class ,'addProfileImage']);
@@ -28,9 +29,9 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('search/{search}',[StoreController::class ,'search']);
 
     Route::prefix('cart')->group(function () {
-        Route::post('addBook/{bookId}', [CartController::class, 'addBookToCart']);  
-        Route::delete('removeBook/{bookId}', [CartController::class, 'deleteBookFromCart']); 
-        Route::get('pending', [CartController::class, 'getPendingCart']);  
+        Route::post('addBook/{bookId}', [CartController::class, 'addBookToCart']);
+        Route::delete('removeBook/{bookId}', [CartController::class, 'deleteBookFromCart']);
+        Route::get('pending', [CartController::class, 'getPendingCart']);
         Route::get('done', [CartController::class, 'getDoneCarts']);
         Route::get('confirm',[CartController::class ,'confirmtCart']);
         Route::delete('delete/{cart_id}',[CartController::class, 'deleteCart']);
@@ -43,4 +44,6 @@ Route::middleware('auth:sanctum')->group(function(){
     });
 
 
+
 });
+

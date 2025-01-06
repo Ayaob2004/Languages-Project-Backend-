@@ -33,24 +33,30 @@ class FavoriteController extends Controller
 
 
     public function getAllFavorite()
-    {
-        $user = Auth::user();
-        $favorite = $user->favorite;
-        if ($favorite) {
-            $books = $favorite->books->map(function ($book) {
-                return [
-                    'name' => $book->name,
-                    'author' => $book->author,
-                    'price' => $book->price,
-                    'image' => $book->image,
-                    'ratings' => $book->ratings,
-                    'details' => $book->details,
-                    'type' => $book->type
-                ];
-            });
-            return response()->json($books);
-        }
-        return response()->json(['message' => 'No favorite list found.'], 404);
+{
+    $user = Auth::user();
+    $favorite = $user->favorite;
+
+    if ($favorite) {
+        $books = $favorite->books->map(function ($book) {
+            return [
+                'name' => __($book->name),
+                'author' => __($book->author),
+                'price' => $book->price,
+                'image' => $book->image,
+                'ratings' => $book->ratings,
+                'details' => __($book->details),
+                'type' => __($book->type)
+            ];
+        });
+
+        return response()->json([
+            'message' => 'favorite_list_message',
+            'books' => $books,
+        ]);
     }
 
+    return response()->json(['message' => 'No favorite list found.'], 404);
+
+}
 }
