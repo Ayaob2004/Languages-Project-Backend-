@@ -60,7 +60,7 @@ class StoreController extends Controller
 
     public function getBookDetail($book_id){
         $book = Book::where('id', $book_id)
-            ->select('name', 'author', 'image', 'price', 'ratings', 'details', 'type')
+            ->select('id','name', 'author', 'image', 'price', 'ratings', 'details', 'type')
             ->first();
 
         if ($book) {
