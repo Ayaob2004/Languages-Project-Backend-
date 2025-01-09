@@ -45,7 +45,7 @@ class StoreController extends Controller
                 $query->where('stores.id', $store_id);
             })
             ->where('type', $type)
-            ->select('name', 'image', 'author', 'price', 'type')
+            ->select('id','name', 'image', 'author', 'price', 'type')
             ->get();
 
         $translatedBooks = $books->map(function ($book) {
