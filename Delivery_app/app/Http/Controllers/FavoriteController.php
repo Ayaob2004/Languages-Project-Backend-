@@ -40,6 +40,7 @@ class FavoriteController extends Controller
     if ($favorite) {
         $books = $favorite->books->map(function ($book) {
             return [
+                'id' => $book->id,
                 'name' => __($book->name),
                 'author' => __($book->author),
                 'price' => $book->price,
@@ -49,13 +50,11 @@ class FavoriteController extends Controller
                 'type' => __($book->type)
             ];
         });
-
         return response()->json([
             'message' => 'favorite_list_message',
             'books' => $books,
         ]);
     }
-
     return response()->json(['message' => 'No favorite list found.'], 404);
 
 }

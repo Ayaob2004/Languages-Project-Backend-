@@ -139,12 +139,6 @@ class CartController extends Controller
         if (!$cart) {
             return response()->json(['message' => 'Cart not found'], 404);
         }
-        // $cart = Cart::find($cart_id);
-        // if(!$cart){
-        //     return response()->json([
-        //         'messege' => 'Cart not found'
-        //     ], 404);
-        // }
         $cart->status = 'done';
         $cart->save();
         $books = $cart->books()->get();
