@@ -81,7 +81,22 @@ class StoreController extends Controller
         }
     }
 
-
+    public function getBookCountInCart($bookId)
+    {
+        $user = Auth::user();
+        $cart = $user->carts()->where('status', 'pending')->first();
+        if (!$cart) {
+            return response()->json([
+                'message' => 'No pending cart found',
+                'book_count_in_cart' => 0
+            ], 200);
+        }
+        $bookCountInCart = $cart->books()->where('book_id', $bookId)->count();
+        return response()->json([
+            'message' => 'Book count in cart retrieved successfully',
+            'book_count_in_cart' => $bookCountInCart
+        ], 200);
+    }
 
     public function search($search){
         $results = Store::where('name', 'like', "%$search%")->get();
