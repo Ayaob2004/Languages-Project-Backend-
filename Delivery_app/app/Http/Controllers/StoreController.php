@@ -84,12 +84,26 @@ class StoreController extends Controller
 
 
     public function search($search){
-        $results = Store::where('name', 'like', "%$search%")->get();
-        $results2 = Book::where('name', 'like', "%$search%")->get();
+        $stores = Store::where('name', 'like', "%$search%")->get();
+        $books = Book::where('name', 'like', "%$search%")->get();
+
+        $translatedBooks = $books->map(function ($book) {
+            $book->name = __($book->name);
+            $book->type = __($book->type);
+            $book->author = __($book->author);
+            $book->details = __($book->details);
+            return $book;
+        });
+
+        $translatedStores = $stores->map(function ($store) {
+            $store->name = __($store->name);
+            return $store;
+        });
+
         return response()->json([
             'messege' => 'the search results',
-            'Stores' => $results,
-            'Books' => $results2
+            'Stores' => $translatedStores,
+            'Books' => $translatedBooks
         ]);
     }
 

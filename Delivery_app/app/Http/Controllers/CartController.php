@@ -67,11 +67,20 @@ class CartController extends Controller
         if (!$cart) {
             return response()->json(['message' => 'No pending cart found'], 404);
         }
+
         $books = $cart->books;
+        $translatedBooks = $books->map(function ($book) {
+            $book->name = __($book->name);
+            $book->type = __($book->type);
+            $book->author = __($book->author);
+            return $book;
+        });
+
+
         return response()->json([
             'message' => 'Books retrieved successfully',
-            'books' => $books,
-            'total_cost' => $cart->cost
+            'books' => $translatedBooks,
+            'total_cost' => $cart->cost,
         ], 200);
     }
 
@@ -85,12 +94,22 @@ class CartController extends Controller
         if (!$cart) {
             return response()->json(['message' => 'No pending cart found'], 404);
         }
+
+        $books = $cart->books;
+        $translatedBooks = $books->map(function ($book) {
+            $book->name = __($book->name);
+            $book->type = __($book->type);
+            $book->author = __($book->author);
+            $book->details = __($book->details);
+            return $book;
+        });
+
         return response()->json([
             'message' => 'Pending cart retrieved successfully',
             'cart' => [
                 'id' => $cart->id,
                 'total_cost' => $cart->cost,
-                'books' => $cart->books,
+                'books' => $translatedBooks
             ]
         ], 200);
     }
@@ -101,20 +120,27 @@ class CartController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User not authenticated'], 401);
         }
-        $doneCarts = $user->carts()->where('status', 'done')->get();
-        if ($doneCarts->isEmpty()) {
-            return response()->json(['message' => 'No done carts found'], 404);
+        $cart = $user->carts()->where('status', 'done')->first();
+        if (!$cart) {
+            return response()->json(['message' => 'No done cart found'], 404);
         }
-        $cartsData = $doneCarts->map(function ($cart) {
-            return [
-                'cart_id' => $cart->id,
-                'total_cost' => $cart->cost,
-                'books' => $cart->books,
-            ];
+
+        $books = $cart->books;
+        $translatedBooks = $books->map(function ($book) {
+            $book->name = __($book->name);
+            $book->type = __($book->type);
+            $book->author = __($book->author);
+            $book->details = __($book->details);
+            return $book;
         });
+
         return response()->json([
-            'message' => 'Done carts retrieved successfully',
-            'done_carts' => $cartsData
+            'message' => 'done cart retrieved successfully',
+            'cart' => [
+                'id' => $cart->id,
+                'total_cost' => $cart->cost,
+                'books' => $translatedBooks
+            ]
         ], 200);
     }
 
