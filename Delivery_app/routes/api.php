@@ -26,6 +26,7 @@ Route::middleware(['auth:sanctum', SetLocale::class])->group(function() {
     Route::get('types',[StoreController::class ,'getAllTypes']);
     Route::get('books/{store_id}/{type}',[StoreController::class ,'getBooksByStoreAndType']);
     Route::get('bookDetail/{book_id}',[StoreController::class ,'getBookDetail']);
+    Route::get('count/{bookId}', [StoreController::class, 'getBookCountInCart']);
     Route::get('search/{search}',[StoreController::class ,'search']);
 
     Route::prefix('cart')->group(function () {

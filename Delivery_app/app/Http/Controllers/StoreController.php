@@ -45,7 +45,7 @@ class StoreController extends Controller
                 $query->where('stores.id', $store_id);
             })
             ->where('type', $type)
-            ->select('name', 'image', 'author', 'price', 'type')
+            ->select('id','name', 'image', 'author', 'price', 'type')
             ->get();
 
         $translatedBooks = $books->map(function ($book) {
@@ -60,7 +60,7 @@ class StoreController extends Controller
 
     public function getBookDetail($book_id){
         $book = Book::where('id', $book_id)
-            ->select('name', 'author', 'image', 'price', 'ratings', 'details', 'type')
+            ->select('id','name', 'author', 'image', 'price', 'ratings', 'details', 'type')
             ->first();
 
         if ($book) {
@@ -81,7 +81,22 @@ class StoreController extends Controller
         }
     }
 
-
+    public function getBookCountInCart($bookId)
+    {
+        $user = Auth::user();
+        $cart = $user->carts()->where('status', 'pending')->first();
+        if (!$cart) {
+            return response()->json([
+                'message' => 'No pending cart found',
+                'book_count_in_cart' => 0
+            ], 200);
+        }
+        $bookCountInCart = $cart->books()->where('book_id', $bookId)->count();
+        return response()->json([
+            'message' => 'Book count in cart retrieved successfully',
+            'book_count_in_cart' => $bookCountInCart
+        ], 200);
+    }
 
     public function search($search){
         $stores = Store::where('name', 'like', "%$search%")->get();
